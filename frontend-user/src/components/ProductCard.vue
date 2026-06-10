@@ -31,15 +31,24 @@
             ¥{{ product.originalPrice }}
           </span>
         </div>
-        <div class="card-rating">
-          <el-rate
-            :model-value="product.rating"
-            disabled
-            :size="14"
-            :colors="['#d4a574', '#d4a574', '#d4a574']"
-          />
-          <span class="sales">月售{{ product.sales }}</span>
-        </div>
+        <el-button
+          type="primary"
+          size="small"
+          round
+          class="add-cart-btn"
+          @click.stop="handleAddToCart"
+        >
+          <el-icon><ShoppingCart /></el-icon>
+        </el-button>
+      </div>
+      <div class="card-rating-row">
+        <el-rate
+          :model-value="product.rating"
+          disabled
+          :size="12"
+          :colors="['#d4a574', '#d4a574', '#d4a574']"
+        />
+        <span class="sales">月售{{ product.sales }}</span>
       </div>
     </div>
   </div>
@@ -47,6 +56,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart'
+import { ShoppingCart } from '@element-plus/icons-vue'
 
 const props = defineProps({
   product: {
@@ -56,9 +67,14 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 function goToDetail() {
   router.push(`/product/${props.product.id}`)
+}
+
+function handleAddToCart() {
+  cartStore.addToCart(props.product, 1)
 }
 
 function getTagType(tag) {
@@ -172,7 +188,8 @@ function getTagType(tag) {
 .card-bottom {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .card-price {
@@ -193,14 +210,29 @@ function getTagType(tag) {
   text-decoration: line-through;
 }
 
-.card-rating {
+.add-cart-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: #d4a574;
+  border-color: #d4a574;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  justify-content: center;
 }
 
-.card-rating :deep(.el-rate) {
+.add-cart-btn:hover {
+  background: #c49664;
+  border-color: #c49664;
+}
+
+.card-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-rating-row :deep(.el-rate) {
   height: auto;
 }
 

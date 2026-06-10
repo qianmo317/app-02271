@@ -90,24 +90,37 @@
             <span><el-icon><Select /></el-icon> 冷链配送</span>
           </div>
 
+          <!-- 数量选择 -->
+          <div class="quantity-section">
+            <span class="quantity-label">购买数量</span>
+            <el-input-number
+              v-model="quantity"
+              :min="1"
+              :max="99"
+              size="large"
+              class="quantity-input"
+            />
+          </div>
+
           <!-- 引导按钮 -->
           <div class="action-buttons">
             <el-button
               type="primary"
               size="large"
               round
-              class="contact-btn"
-              @click="$router.push('/contact')"
+              class="add-cart-btn-detail"
+              @click="handleAddToCart"
             >
-              联系我们预约
+              <el-icon><ShoppingCart /></el-icon>
+              加入购物车
             </el-button>
             <el-button
               size="large"
               round
-              class="back-btn"
-              @click="$router.push('/products')"
+              class="buy-now-btn"
+              @click="handleBuyNow"
             >
-              继续浏览
+              立即下单
             </el-button>
           </div>
         </div>
@@ -139,22 +152,37 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Select } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Select, ShoppingCart } from '@element-plus/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const product = ref(null)
 const loading = ref(true)
 const currentImage = ref('')
 const activeTab = ref('detail')
+const quantity = ref(1)
 
 const discount = computed(() => {
   if (!product.value) return false
   return product.value.originalPrice > product.value.price
 })
+
+function handleAddToCart() {
+  if (!product.value) return
+  cartStore.addToCart(product.value, quantity.value)
+}
+
+function handleBuyNow() {
+  if (!product.value) return
+  cartStore.addToCart(product.value, quantity.value)
+  router.push('/cart')
+}
 
 async function loadProduct(id) {
   loading.value = true
@@ -322,36 +350,62 @@ onMounted(() => {
   color: #67c23a;
 }
 
+.quantity-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.quantity-label {
+  font-size: 14px;
+  color: #999;
+}
+
+.quantity-input :deep(.el-input-number__decrease),
+.quantity-input :deep(.el-input-number__increase) {
+  width: 36px;
+}
+
+.quantity-input :deep(.el-input__wrapper) {
+  border-radius: 8px;
+}
+
 .action-buttons {
   display: flex;
   gap: 16px;
 }
 
-.contact-btn {
+.add-cart-btn-detail {
   flex: 1;
   height: 48px;
   font-size: 16px;
   background: #d4a574;
   border-color: #d4a574;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.contact-btn:hover {
+.add-cart-btn-detail:hover {
   background: #c49664;
   border-color: #c49664;
 }
 
-.back-btn {
+.buy-now-btn {
   flex: 1;
   height: 48px;
   font-size: 16px;
   color: #d4a574;
   border-color: #d4a574;
+  background: #fff9f0;
 }
 
-.back-btn:hover {
+.buy-now-btn:hover {
   color: #c49664;
   border-color: #c49664;
-  background: #fff9f0;
+  background: #fff5e6;
 }
 
 /* 详情标签页 */

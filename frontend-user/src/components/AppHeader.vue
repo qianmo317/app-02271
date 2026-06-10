@@ -31,6 +31,20 @@
           @keyup.enter="handleSearch"
           @clear="handleClear"
         />
+        <div class="header-icons">
+          <router-link to="/orders" class="icon-btn" title="我的订单">
+            <el-icon :size="22"><Document /></el-icon>
+            <span v-if="orderStore.orderCount > 0" class="icon-badge">
+              {{ orderStore.orderCount > 99 ? '99+' : orderStore.orderCount }}
+            </span>
+          </router-link>
+          <router-link to="/cart" class="icon-btn" title="购物车">
+            <el-icon :size="22"><ShoppingCart /></el-icon>
+            <span v-if="cartStore.totalCount > 0" class="icon-badge">
+              {{ cartStore.totalCount > 99 ? '99+' : cartStore.totalCount }}
+            </span>
+          </router-link>
+        </div>
       </div>
 
       <!-- 移动端菜单按钮 -->
@@ -59,6 +73,18 @@
         >
           {{ item.name }}
         </router-link>
+        <router-link to="/cart" class="mobile-nav-item" @click="showMobileMenu = false">
+          购物车
+          <span v-if="cartStore.totalCount > 0" class="mobile-badge">
+            {{ cartStore.totalCount > 99 ? '99+' : cartStore.totalCount }}
+          </span>
+        </router-link>
+        <router-link to="/orders" class="mobile-nav-item" @click="showMobileMenu = false">
+          我的订单
+          <span v-if="orderStore.orderCount > 0" class="mobile-badge">
+            {{ orderStore.orderCount > 99 ? '99+' : orderStore.orderCount }}
+          </span>
+        </router-link>
       </div>
     </el-drawer>
   </header>
@@ -68,10 +94,14 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Search, Menu } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { useOrderStore } from '@/stores/order'
+import { Search, Menu, ShoppingCart, Document } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
+const orderStore = useOrderStore()
 
 const searchText = ref('')
 const isScrolled = ref(false)
@@ -200,6 +230,46 @@ onUnmounted(() => {
   gap: 16px;
 }
 
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  position: relative;
+  color: #666;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.icon-btn:hover {
+  color: #d4a574;
+  background: #fff5e6;
+}
+
+.icon-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 9px;
+  font-weight: 500;
+}
+
 .search-input {
   width: 200px;
 }
@@ -241,10 +311,22 @@ onUnmounted(() => {
   font-size: 16px;
   border-bottom: 1px solid #f0f0f0;
   transition: color 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .mobile-nav-item:hover {
   color: #d4a574;
+}
+
+.mobile-badge {
+  background: #e74c3c;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {

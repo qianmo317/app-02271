@@ -31,6 +31,18 @@ const routes = [
     component: () => import('@/views/ContactView.vue'),
     meta: { title: '联系我们 - 蜜语甜心' },
   },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('@/views/CartView.vue'),
+    meta: { title: '购物车 - 蜜语甜心' },
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: () => import('@/views/OrdersView.vue'),
+    meta: { title: '我的订单 - 蜜语甜心' },
+  },
 ]
 
 const router = createRouter({
