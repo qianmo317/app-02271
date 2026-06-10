@@ -90,16 +90,23 @@
             <span><el-icon><Select /></el-icon> 冷链配送</span>
           </div>
 
-          <!-- 引导按钮 -->
+          <!-- 数量选择 -->
+          <div class="quantity-section">
+            <span class="quantity-label">购买数量</span>
+            <el-input-number v-model="quantity" :min="1" :max="99" size="large" />
+          </div>
+
+          <!-- 操作按钮 -->
           <div class="action-buttons">
             <el-button
               type="primary"
               size="large"
               round
-              class="contact-btn"
-              @click="$router.push('/contact')"
+              class="add-cart-btn"
+              @click="handleAddCart"
             >
-              联系我们预约
+              <el-icon><ShoppingCart /></el-icon>
+              加入购物车
             </el-button>
             <el-button
               size="large"
@@ -141,15 +148,18 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Select } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Select, ShoppingCart } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const product = ref(null)
 const loading = ref(true)
 const currentImage = ref('')
 const activeTab = ref('detail')
+const quantity = ref(1)
 
 const discount = computed(() => {
   if (!product.value) return false
@@ -164,6 +174,12 @@ async function loadProduct(id) {
     currentImage.value = data.images?.[0] || data.image
   }
   loading.value = false
+}
+
+function handleAddCart() {
+  if (product.value) {
+    cartStore.addItem(product.value, quantity.value)
+  }
 }
 
 watch(
@@ -322,12 +338,24 @@ onMounted(() => {
   color: #67c23a;
 }
 
+.quantity-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.quantity-label {
+  font-size: 14px;
+  color: #999;
+}
+
 .action-buttons {
   display: flex;
   gap: 16px;
 }
 
-.contact-btn {
+.add-cart-btn {
   flex: 1;
   height: 48px;
   font-size: 16px;
@@ -335,7 +363,7 @@ onMounted(() => {
   border-color: #d4a574;
 }
 
-.contact-btn:hover {
+.add-cart-btn:hover {
   background: #c49664;
   border-color: #c49664;
 }
