@@ -1,6 +1,6 @@
 <template>
-  <div class="product-card" @click="goToDetail">
-    <div class="card-image">
+  <div class="product-card">
+    <div class="card-image" @click="goToDetail">
       <img :src="product.image" :alt="product.name" loading="lazy" />
       <div class="card-tags" v-if="product.tags?.length">
         <el-tag
@@ -15,8 +15,8 @@
         </el-tag>
       </div>
       <div class="card-overlay">
-        <el-button type="primary" round @click.stop="goToDetail">
-          查看详情
+        <el-button type="primary" round @click.stop="handleAddToCart">
+          加入购物车
         </el-button>
       </div>
     </div>
@@ -47,6 +47,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart'
 
 const props = defineProps({
   product: {
@@ -56,9 +57,14 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 function goToDetail() {
   router.push(`/product/${props.product.id}`)
+}
+
+function handleAddToCart() {
+  cartStore.addToCart(props.product)
 }
 
 function getTagType(tag) {
