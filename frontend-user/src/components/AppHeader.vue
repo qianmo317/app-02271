@@ -31,6 +31,15 @@
           @keyup.enter="handleSearch"
           @clear="handleClear"
         />
+        <router-link to="/cart" class="cart-icon-wrapper">
+          <el-icon :size="22" class="cart-icon"><ShoppingCart /></el-icon>
+          <el-badge
+            v-if="cartStore.totalCount > 0"
+            :value="cartStore.totalCount"
+            :max="99"
+            class="cart-badge"
+          />
+        </router-link>
       </div>
 
       <!-- 移动端菜单按钮 -->
@@ -68,10 +77,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Search, Menu } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Search, Menu, ShoppingCart } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const searchText = ref('')
 const isScrolled = ref(false)
@@ -80,6 +91,8 @@ const showMobileMenu = ref(false)
 const navItems = [
   { name: '首页', path: '/' },
   { name: '全部产品', path: '/products' },
+  { name: '购物车', path: '/cart' },
+  { name: '我的订单', path: '/orders' },
   { name: '关于我们', path: '/about' },
   { name: '联系我们', path: '/contact' },
 ]
@@ -213,6 +226,41 @@ onUnmounted(() => {
 .search-input :deep(.el-input__wrapper:hover),
 .search-input :deep(.el-input__wrapper.is-focus) {
   box-shadow: 0 0 0 1px #d4a574;
+}
+
+.cart-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+
+.cart-icon-wrapper:hover {
+  background: #f5f5f5;
+}
+
+.cart-icon {
+  color: #666;
+  transition: color 0.3s;
+}
+
+.cart-icon-wrapper:hover .cart-icon {
+  color: #d4a574;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.cart-badge :deep(.el-badge__content) {
+  font-size: 11px;
 }
 
 
