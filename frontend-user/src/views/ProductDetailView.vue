@@ -83,6 +83,18 @@
 
           <el-divider />
 
+          <!-- 数量选择 -->
+          <div class="quantity-section">
+            <span class="quantity-label">购买数量</span>
+            <el-input-number
+              v-model="quantity"
+              :min="1"
+              :max="99"
+              size="large"
+              controls-position="right"
+            />
+          </div>
+
           <!-- 服务保障 -->
           <div class="service-tags">
             <span><el-icon><Select /></el-icon> 新鲜现做</span>
@@ -93,21 +105,21 @@
           <!-- 引导按钮 -->
           <div class="action-buttons">
             <el-button
+              size="large"
+              round
+              class="cart-btn"
+              @click="handleAddToCart"
+            >
+              加入购物车
+            </el-button>
+            <el-button
               type="primary"
               size="large"
               round
-              class="contact-btn"
-              @click="$router.push('/contact')"
+              class="buy-btn"
+              @click="handleBuyNow"
             >
-              联系我们预约
-            </el-button>
-            <el-button
-              size="large"
-              round
-              class="back-btn"
-              @click="$router.push('/products')"
-            >
-              继续浏览
+              立即购买
             </el-button>
           </div>
         </div>
@@ -139,17 +151,21 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
+import { useCartStore } from '@/stores/cart'
 import { Select } from '@element-plus/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const product = ref(null)
 const loading = ref(true)
 const currentImage = ref('')
 const activeTab = ref('detail')
+const quantity = ref(1)
 
 const discount = computed(() => {
   if (!product.value) return false
@@ -166,10 +182,26 @@ async function loadProduct(id) {
   loading.value = false
 }
 
+function handleAddToCart() {
+  if (product.value) {
+    cartStore.addToCart(product.value, quantity.value)
+  }
+}
+
+function handleBuyNow() {
+  if (product.value) {
+    cartStore.addToCart(product.value, quantity.value)
+    router.push('/cart')
+  }
+}
+
 watch(
   () => route.params.id,
   (newId) => {
-    if (newId) loadProduct(newId)
+    if (newId) {
+      quantity.value = 1
+      loadProduct(newId)
+    }
   }
 )
 
@@ -322,12 +354,47 @@ onMounted(() => {
   color: #67c23a;
 }
 
+.quantity-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.quantity-label {
+  font-size: 15px;
+  color: #666;
+}
+
+.quantity-section :deep(.el-input-number) {
+  width: 140px;
+}
+
+.quantity-section :deep(.el-input-number .el-input__inner) {
+  text-align: center;
+}
+
 .action-buttons {
   display: flex;
   gap: 16px;
 }
 
-.contact-btn {
+.cart-btn {
+  flex: 1;
+  height: 48px;
+  font-size: 16px;
+  color: #d4a574;
+  border-color: #d4a574;
+  background: #fff;
+}
+
+.cart-btn:hover {
+  color: #c49664;
+  border-color: #c49664;
+  background: #fff9f0;
+}
+
+.buy-btn {
   flex: 1;
   height: 48px;
   font-size: 16px;
@@ -335,23 +402,9 @@ onMounted(() => {
   border-color: #d4a574;
 }
 
-.contact-btn:hover {
+.buy-btn:hover {
   background: #c49664;
   border-color: #c49664;
-}
-
-.back-btn {
-  flex: 1;
-  height: 48px;
-  font-size: 16px;
-  color: #d4a574;
-  border-color: #d4a574;
-}
-
-.back-btn:hover {
-  color: #c49664;
-  border-color: #c49664;
-  background: #fff9f0;
 }
 
 /* 详情标签页 */

@@ -31,6 +31,16 @@
           @keyup.enter="handleSearch"
           @clear="handleClear"
         />
+        <router-link to="/cart" class="action-btn" :class="{ active: $route.path === '/cart' }">
+          <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" :max="99">
+            <el-icon :size="22"><ShoppingCart /></el-icon>
+          </el-badge>
+          <span class="action-text">购物车</span>
+        </router-link>
+        <router-link to="/orders" class="action-btn" :class="{ active: $route.path === '/orders' }">
+          <el-icon :size="22"><Document /></el-icon>
+          <span class="action-text">订单</span>
+        </router-link>
       </div>
 
       <!-- 移动端菜单按钮 -->
@@ -59,6 +69,20 @@
         >
           {{ item.name }}
         </router-link>
+        <router-link
+          to="/cart"
+          class="mobile-nav-item"
+          @click="showMobileMenu = false"
+        >
+          🛒 购物车 <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" class="cart-badge" />
+        </router-link>
+        <router-link
+          to="/orders"
+          class="mobile-nav-item"
+          @click="showMobileMenu = false"
+        >
+          📋 我的订单
+        </router-link>
       </div>
     </el-drawer>
   </header>
@@ -68,10 +92,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Search, Menu } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Search, Menu, ShoppingCart, Document } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const searchText = ref('')
 const isScrolled = ref(false)
@@ -215,6 +241,31 @@ onUnmounted(() => {
   box-shadow: 0 0 0 1px #d4a574;
 }
 
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s;
+  padding: 4px 8px;
+}
+
+.action-btn:hover,
+.action-btn.active {
+  color: #d4a574;
+}
+
+.action-text {
+  font-size: 12px;
+}
+
+.cart-badge {
+  margin-left: 4px;
+}
+
 
 .mobile-menu-btn {
   display: none;
@@ -249,7 +300,8 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .nav-menu,
-  .search-input {
+  .search-input,
+  .action-btn .action-text {
     display: none;
   }
 
@@ -259,6 +311,10 @@ onUnmounted(() => {
 
   .header-container {
     height: 60px;
+  }
+
+  .header-actions {
+    gap: 8px;
   }
 
   .logo-text {

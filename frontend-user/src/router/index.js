@@ -20,6 +20,18 @@ const routes = [
     meta: { title: '产品详情 - 蜜语甜心' },
   },
   {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('@/views/CartView.vue'),
+    meta: { title: '购物车 - 蜜语甜心' },
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: () => import('@/views/OrdersView.vue'),
+    meta: { title: '我的订单 - 蜜语甜心' },
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('@/views/AboutView.vue'),
