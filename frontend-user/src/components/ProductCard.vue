@@ -15,8 +15,12 @@
         </el-tag>
       </div>
       <div class="card-overlay">
-        <el-button type="primary" round @click.stop="goToDetail">
+        <el-button round class="overlay-btn detail-btn" @click.stop="goToDetail">
           查看详情
+        </el-button>
+        <el-button type="primary" round class="overlay-btn cart-btn" @click.stop="handleAddToCart">
+          <el-icon style="margin-right: 4px"><ShoppingCart /></el-icon>
+          加入购物车
         </el-button>
       </div>
     </div>
@@ -47,6 +51,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart'
+import { ShoppingCart } from '@element-plus/icons-vue'
 
 const props = defineProps({
   product: {
@@ -56,9 +62,14 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 function goToDetail() {
   router.push(`/product/${props.product.id}`)
+}
+
+function handleAddToCart() {
+  cartStore.addToCart(props.product, 1)
 }
 
 function getTagType(tag) {
@@ -120,10 +131,12 @@ function getTagType(tag) {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;
+  padding: 16px 12px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 8px;
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.3s ease;
@@ -134,12 +147,29 @@ function getTagType(tag) {
   transform: translateY(0);
 }
 
-.card-overlay .el-button {
+.card-overlay .overlay-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.card-overlay .detail-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.card-overlay .detail-btn:hover {
+  background: #fff;
+  color: #d4a574;
+  border-color: #fff;
+}
+
+.card-overlay .cart-btn {
   background: #d4a574;
   border-color: #d4a574;
 }
 
-.card-overlay .el-button:hover {
+.card-overlay .cart-btn:hover {
   background: #c49664;
   border-color: #c49664;
 }
