@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+docs/
+README.md
+.alkaid-sop
+
+# Node modules (will be installed in container)
+frontend-user/node_modules
+
+# IDE
+.idea
+.vscode
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
