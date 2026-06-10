@@ -90,24 +90,36 @@
             <span><el-icon><Select /></el-icon> 冷链配送</span>
           </div>
 
-          <!-- 引导按钮 -->
+          <!-- 数量选择 -->
+          <div class="quantity-row">
+            <span class="quantity-label">数量</span>
+            <el-input-number
+              v-model="quantity"
+              :min="1"
+              :max="99"
+              size="large"
+            />
+          </div>
+
+          <!-- 操作按钮 -->
           <div class="action-buttons">
             <el-button
               type="primary"
               size="large"
               round
               class="contact-btn"
-              @click="$router.push('/contact')"
+              @click="handleAddToCart"
             >
-              联系我们预约
+              <el-icon style="margin-right: 6px"><ShoppingCart /></el-icon>
+              加入购物车
             </el-button>
             <el-button
               size="large"
               round
               class="back-btn"
-              @click="$router.push('/products')"
+              @click="handleBuyNow"
             >
-              继续浏览
+              立即购买
             </el-button>
           </div>
         </div>
@@ -139,17 +151,21 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Select } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Select, ShoppingCart } from '@element-plus/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const product = ref(null)
 const loading = ref(true)
 const currentImage = ref('')
 const activeTab = ref('detail')
+const quantity = ref(1)
 
 const discount = computed(() => {
   if (!product.value) return false
@@ -164,6 +180,17 @@ async function loadProduct(id) {
     currentImage.value = data.images?.[0] || data.image
   }
   loading.value = false
+}
+
+function handleAddToCart() {
+  if (!product.value) return
+  cartStore.addToCart(product.value, quantity.value)
+}
+
+function handleBuyNow() {
+  if (!product.value) return
+  cartStore.addToCart(product.value, quantity.value)
+  router.push('/cart')
 }
 
 watch(
@@ -320,6 +347,18 @@ onMounted(() => {
 
 .service-tags .el-icon {
   color: #67c23a;
+}
+
+.quantity-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.quantity-label {
+  font-size: 14px;
+  color: #666;
 }
 
 .action-buttons {

@@ -31,6 +31,18 @@
           @keyup.enter="handleSearch"
           @clear="handleClear"
         />
+        <router-link to="/orders" class="action-link" title="我的订单">
+          <el-icon :size="20"><Tickets /></el-icon>
+        </router-link>
+        <router-link to="/cart" class="action-link cart-link" title="购物车">
+          <el-badge
+            :value="cartStore.totalCount"
+            :hidden="cartStore.totalCount === 0"
+            :max="99"
+          >
+            <el-icon :size="20"><ShoppingCart /></el-icon>
+          </el-badge>
+        </router-link>
       </div>
 
       <!-- 移动端菜单按钮 -->
@@ -59,6 +71,20 @@
         >
           {{ item.name }}
         </router-link>
+        <router-link
+          to="/cart"
+          class="mobile-nav-item"
+          @click="showMobileMenu = false"
+        >
+          购物车 ({{ cartStore.totalCount }})
+        </router-link>
+        <router-link
+          to="/orders"
+          class="mobile-nav-item"
+          @click="showMobileMenu = false"
+        >
+          我的订单
+        </router-link>
       </div>
     </el-drawer>
   </header>
@@ -68,10 +94,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
-import { Search, Menu } from '@element-plus/icons-vue'
+import { useCartStore } from '@/stores/cart'
+import { Search, Menu, ShoppingCart, Tickets } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const searchText = ref('')
 const isScrolled = ref(false)
@@ -213,6 +241,28 @@ onUnmounted(() => {
 .search-input :deep(.el-input__wrapper:hover),
 .search-input :deep(.el-input__wrapper.is-focus) {
   box-shadow: 0 0 0 1px #d4a574;
+}
+
+.action-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.action-link:hover {
+  color: #d4a574;
+  background: #fff9f0;
+}
+
+.action-link :deep(.el-badge__content) {
+  background-color: #e74c3c;
+  border-color: #fff;
 }
 
 
